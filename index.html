@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Flaga">
+<title>Human Flag — Faza 2</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+body{background:#0a0a0a;color:#f0ede8;font-family:-apple-system,sans-serif;max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:90px;overflow-x:hidden}
+.hdr{padding:52px 16px 0;background:#111}
+.atitle{font-size:28px;font-weight:700;margin-bottom:2px}
+.atitle span{color:#c9a84c}
+.ameta{font-size:12px;color:#666;margin-bottom:14px}
+.wsel{display:flex;gap:8px;margin-bottom:14px}
+.wbtn{flex:1;padding:8px;border-radius:10px;border:1px solid #2a2a2a;background:#1a1a1a;font-size:12px;color:#888;cursor:pointer;font-family:-apple-system,sans-serif;transition:all .15s}
+.wbtn.on{background:#c9a84c;color:#000;border-color:#c9a84c;font-weight:700}
+.prog-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding:12px;background:#161616;border-radius:14px;border:1px solid #222}
+.ring-w{position:relative;width:56px;height:56px;flex-shrink:0}
+.ring-w svg{transform:rotate(-90deg)}
+.rtxt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#c9a84c}
+.pi-lbl{font-size:11px;color:#666;margin-bottom:2px}
+.pi-cnt{font-size:20px;font-weight:700}
+.pi-sub{font-size:11px;color:#444;margin-top:2px}
+.tabs{display:flex;overflow-x:auto;gap:8px;padding-bottom:14px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.atab{background:#161616;border:1px solid #2a2a2a;color:#888;font-family:-apple-system,sans-serif;font-size:12px;padding:7px 16px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all .15s}
+.atab.on{background:#c9a84c;color:#000;border-color:#c9a84c;font-weight:700}
+.panel{display:none;padding:0 16px}
+.panel.on{display:block}
+.slbl{font-size:10px;letter-spacing:.1em;color:#444;text-transform:uppercase;margin:16px 0 8px 4px}
+.acard{background:#161616;border-radius:14px;overflow:hidden;margin-bottom:10px;border:1px solid #222;transition:border-color .2s}
+.acard.dn{border-color:#4ade80;background:#050f0a}
+.exrow{display:flex;align-items:center;padding:13px 14px;gap:12px;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background .1s}
+.exrow:active{background:#1e1e1e}
+.chk{width:26px;height:26px;border-radius:50%;border:2px solid #333;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.chk.on{background:#4ade80;border-color:#4ade80}
+.chk svg{width:13px;height:13px;fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .15s}
+.chk.on svg{opacity:1}
+.exb{flex:1;min-width:0}
+.exn{font-size:15px;font-weight:500;transition:all .2s}
+.acard.dn .exn{color:#444;text-decoration:line-through}
+.exd{font-size:12px;color:#666;margin-top:3px;line-height:1.4}
+.exv{font-size:13px;font-weight:700;color:#c9a84c;flex-shrink:0;white-space:nowrap}
+.acard.dn .exv{color:#4ade80}
+.alrt{border-radius:12px;padding:11px 14px;margin-bottom:10px;font-size:13px;line-height:1.6;border-left:3px solid}
+.ag{background:#1a1200;color:#c9a84c;border-color:#c9a84c}
+.ar{background:#1a0808;color:#f87171;border-color:#f87171}
+.agr{background:#061208;color:#4ade80;border-color:#4ade80}
+.abl{background:#06101a;color:#60a5fa;border-color:#60a5fa}
+.drill{display:flex;gap:12px;padding:13px 14px;border-bottom:1px solid #1e1e1e;cursor:pointer;-webkit-user-select:none;user-select:none;align-items:flex-start}
+.drill:last-child{border-bottom:none}
+.drill:active{background:#1e1e1e}
+.dnum{width:26px;height:26px;background:#c9a84c;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px;transition:background .2s}
+.drill.dn .dnum{background:#4ade80}
+.dtit{font-size:15px;font-weight:500;transition:all .2s;margin-bottom:3px}
+.drill.dn .dtit{color:#444;text-decoration:line-through}
+.ddet{font-size:12px;color:#666;line-height:1.5}
+.rbtn{width:100%;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:12px;font-size:13px;color:#666;cursor:pointer;margin-top:8px;font-family:-apple-system,sans-serif;transition:all .15s}
+.rbtn:active{color:#f87171;background:#1a0808}
+.sbox{background:#161616;border-radius:14px;border:1px solid #222;padding:14px}
+.sbox-lbl{font-size:11px;color:#666;margin-bottom:4px}
+.sbox-val{font-size:30px;font-weight:700}
+.dp-row{background:#161616;border-radius:14px;border:1px solid #222;padding:12px;margin-bottom:8px}
+.dp-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.dp-nm{font-size:14px;font-weight:500}
+.dp-pct{font-size:13px;font-weight:700;color:#c9a84c}
+.dp-bar{background:#222;border-radius:4px;height:6px;overflow:hidden}
+.dp-fill{background:#c9a84c;height:100%;border-radius:4px;transition:width .3s}
+.dp-fill.full{background:#4ade80}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(10,10,10,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #1e1e1e;display:flex;padding:8px 0 24px}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;font-size:10px;color:#444;border:none;background:none;font-family:-apple-system,sans-serif;transition:color .15s}
+.ni.on{color:#c9a84c}
+.ne{font-size:22px;line-height:1.2}
+.rrow{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-bottom:1px solid #1e1e1e}
+.rrow:last-child{border-bottom:none}
+.rico{font-size:18px;flex-shrink:0;margin-top:1px}
+.rtit{font-size:14px;font-weight:500;margin-bottom:3px}
+.rsub{font-size:12px;color:#666;line-height:1.4}
+.rval{font-size:13px;font-weight:700;color:#c9a84c;flex-shrink:0;padding-left:8px;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="atitle">Human <span>Flag</span></div>
+  <div class="ameta">Faza 2 · 56 lat · 88 kg · Kick First · 4 dni/tydzień</div>
+
+  <div class="wsel">
+    <button class="wbtn on" onclick="setW(1,this)">Tydzień 1–2</button>
+    <button class="wbtn" onclick="setW(2,this)">Tydzień 3–4</button>
+  </div>
+
+  <div class="prog-row">
+    <div class="ring-w">
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <circle fill="none" stroke="#222" stroke-width="4" cx="28" cy="28" r="23"/>
+        <circle id="rfg" fill="none" stroke="#c9a84c" stroke-width="4" stroke-linecap="round" cx="28" cy="28" r="23" stroke-dasharray="144.5" stroke-dashoffset="144.5"/>
+      </svg>
+      <div class="rtxt" id="rpct">0%</div>
+    </div>
+    <div style="flex:1">
+      <div class="pi-lbl">Dzisiejszy trening</div>
+      <div class="pi-cnt"><span id="dc">0</span> / <span id="tc">0</span> ćwiczeń</div>
+      <div class="pi-sub" id="psub">Wybierz dzień i zacznij</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="atab on" onclick="go('k',this)">🎯 Kick</button>
+    <button class="atab" onclick="go('d1',this)">🚩 Dzień 1</button>
+    <button class="atab" onclick="go('d2',this)">💪 Dzień 2</button>
+    <button class="atab" onclick="go('d3',this)">🚩 Dzień 3</button>
+    <button class="atab" onclick="go('d4',this)">💪 Dzień 4</button>
+    <button class="atab" onclick="go('z',this)">📋 Zasady</button>
+    <button class="atab" onclick="go('s',this)">📊 Postęp</button>
+  </div>
+</div>
+
+<!-- KICK DRILL -->
+<div id="k" class="panel on">
+  <div class="alrt ag">🎯 7 minut przed każdą flagą. Zaznacz każdy krok po wykonaniu.</div>
+  <div class="slbl">Spin the cat — zawsze pierwszy</div>
+  <div class="acard" id="cx-k0"><div class="exrow" onclick="tog('k0')"><div class="chk" id="ck-k0"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Spin the cat</div><div class="exd">Kontrolowany · pełny zakres</div></div><div class="exv">3×4/str</div></div></div>
+
+  <div class="slbl">Protokół — 3 drille</div>
+  <div class="acard">
+    <div class="drill" id="dr-k1" onclick="tog('k1')"><div class="dnum" id="dn-k1">1</div><div><div class="dtit">Drill podłogowy</div><div class="ddet">Leżysz na boku · kick z biodra · kolano zablokowane · 3×6/strona</div></div></div>
+    <div class="drill" id="dr-k2" onclick="tog('k2')"><div class="dnum" id="dn-k2">2</div><div><div class="dtit">Slow kick przy drążku</div><div class="ddet">Entry 30° · zatrzymaj w połowie na 3 sek · powoli · 4×4/strona</div></div></div>
+    <div class="drill" id="dr-k3" onclick="tog('k3')"><div class="dnum" id="dn-k3">3</div><div><div class="dtit">Z taśmą nad kolanami</div><div class="ddet">Cienka guma · entry 30° · feedback gdy kolano się zgina · 3×3/strona</div></div></div>
+  </div>
+
+  <div class="slbl">Mobilność L-sit — po D2 i D4</div>
+  <div class="acard" id="cx-km1"><div class="exrow" onclick="tog('km1')"><div class="chk" id="ck-km1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Seated knee tuck lifts</div></div><div class="exv">3×8</div></div></div>
+  <div class="acard" id="cx-km2"><div class="exrow" onclick="tog('km2')"><div class="chk" id="ck-km2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Pike pulses proste nogi</div></div><div class="exv">2×10</div></div></div>
+  <div class="acard" id="cx-km3"><div class="exrow" onclick="tog('km3')"><div class="chk" id="ck-km3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Hamstring floss</div></div><div class="exv">2×8/str</div></div></div>
+  <div class="acard" id="cx-km4"><div class="exrow" onclick="tog('km4')"><div class="chk" id="ck-km4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Hip flexor lunge</div></div><div class="exv">2×25s/str</div></div></div>
+  <button class="rbtn" onclick="rst('k')">Resetuj Kick Drill</button>
+</div>
+
+<!-- DZIEŃ 1 -->
+<div id="d1" class="panel">
+  <div class="alrt ag">🔄 Zacznij od Kick Drill (zakładka 🎯) — 7 minut</div>
+  <div class="slbl">Spin the cat</div>
+  <div class="acard" id="cx-d1s"><div class="exrow" onclick="tog('d1s')"><div class="chk" id="ck-d1s"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Spin the cat</div><div class="exd" id="d1sd">Kontrolowany</div></div><div class="exv">3×4/str</div></div></div>
+
+  <div class="slbl">Flaga — <span id="d1wl">T1–2</span></div>
+  <div class="acard" id="cx-d1f1"><div class="exrow" onclick="tog('d1f1')"><div class="chk" id="ck-d1f1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn" id="d1f1n">Entry 45° slow kick</div><div class="exd">Kolano proste przez cały ruch</div></div><div class="exv" id="d1f1v">4×3/str</div></div></div>
+  <div class="acard" id="cx-d1f2"><div class="exrow" onclick="tog('d1f2')"><div class="chk" id="ck-d1f2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">45° hold proste nogi</div><div class="exd">Bark wciśnięty · głowa neutralna</div></div><div class="exv" id="d1f2v">5×8–10s</div></div></div>
+  <div class="acard" id="cx-d1f3"><div class="exrow" onclick="tog('d1f3')"><div class="chk" id="ck-d1f3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn" id="d1f3n">Hip stack pulses</div></div><div class="exv" id="d1f3v">3×5/str</div></div></div>
+  <div class="acard" id="cx-d1f4"><div class="exrow" onclick="tog('d1f4')"><div class="chk" id="ck-d1f4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn" id="d1f4n">Active hang</div></div><div class="exv" id="d1f4v">2×30s</div></div></div>
+  <div class="alrt ar">🔴 Bark check po każdej serii — skala 1–10. Powyżej 3 → stop.</div>
+
+  <div class="slbl">Drążek</div>
+  <div class="acard" id="cx-d1p1"><div class="exrow" onclick="tog('d1p1')"><div class="chk" id="ck-d1p1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Pull-up</div><div class="exd" id="d1p1d">+10 kg</div></div><div class="exv" id="d1p1v">4×4</div></div></div>
+  <div class="acard" id="cx-d1p2"><div class="exrow" onclick="tog('d1p2')"><div class="chk" id="ck-d1p2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Archer pull-up</div></div><div class="exv" id="d1p2v">3×4/str</div></div></div>
+  <div class="acard" id="cx-d1p3"><div class="exrow" onclick="tog('d1p3')"><div class="chk" id="ck-d1p3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Wycieraczki w zwisie</div><div class="exd">Transfer do flagi</div></div><div class="exv" id="d1p3v">3×6/str</div></div></div>
+  <div class="acard" id="cx-d1p4"><div class="exrow" onclick="tog('d1p4')"><div class="chk" id="ck-d1p4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Scap pull-ups</div></div><div class="exv">3×10</div></div></div>
+  <button class="rbtn" onclick="rst('d1')">Resetuj Dzień 1</button>
+</div>
+
+<!-- DZIEŃ 2 -->
+<div id="d2" class="panel">
+  <div class="slbl">Kółka — push</div>
+  <div class="acard" id="cx-d2k1"><div class="exrow" onclick="tog('d2k1')"><div class="chk" id="ck-d2k1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Ring dips</div><div class="exd" id="d2k1d">+5 kg</div></div><div class="exv" id="d2k1v">4×5</div></div></div>
+  <div class="acard" id="cx-d2k2"><div class="exrow" onclick="tog('d2k2')"><div class="chk" id="ck-d2k2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Pseudo planche na kółkach</div></div><div class="exv" id="d2k2v">4×6</div></div></div>
+  <div class="acard" id="cx-d2k3"><div class="exrow" onclick="tog('d2k3')"><div class="chk" id="ck-d2k3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Support hold na kółkach</div></div><div class="exv">3×20s</div></div></div>
+  <div class="acard" id="cx-d2k4"><div class="exrow" onclick="tog('d2k4')"><div class="chk" id="ck-d2k4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Pompki — wariant dowolny</div><div class="exd">Archer / pike / wide</div></div><div class="exv">3×6</div></div></div>
+  <div class="acard" id="cx-d2k5"><div class="exrow" onclick="tog('d2k5')"><div class="chk" id="ck-d2k5"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Face pulls z gumą</div><div class="exd">Bark rehab — obowiązkowo</div></div><div class="exv">3×15</div></div></div>
+
+  <div class="slbl">Nogi i moc</div>
+  <div class="acard" id="cx-d2n1"><div class="exrow" onclick="tog('d2n1')"><div class="chk" id="ck-d2n1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Przysiady ze sztangą</div><div class="exd" id="d2n1d">4×5</div></div><div class="exv" id="d2n1v">4×5</div></div></div>
+  <div class="acard" id="cx-d2n2"><div class="exrow" onclick="tog('d2n2')"><div class="chk" id="ck-d2n2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Kozackie przysiady</div><div class="exd" id="d2n2d">16 kg</div></div><div class="exv" id="d2n2v">3×5/str</div></div></div>
+  <div class="acard" id="cx-d2n3"><div class="exrow" onclick="tog('d2n3')"><div class="chk" id="ck-d2n3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Single leg RDL z kettlem</div></div><div class="exv">3×8/str</div></div></div>
+  <div class="acard" id="cx-d2n4"><div class="exrow" onclick="tog('d2n4')"><div class="chk" id="ck-d2n4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Box jump</div><div class="exd" id="d2n4d">80 cm</div></div><div class="exv" id="d2n4v">4×3</div></div></div>
+  <div class="acard" id="cx-d2n5"><div class="exrow" onclick="tog('d2n5')"><div class="chk" id="ck-d2n5"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Copenhagen plank</div></div><div class="exv" id="d2n5v">3×25s/str</div></div></div>
+
+  <div class="alrt agr">✅ Mobilność L-sit na końcu (zakładka 🎯)</div>
+  <div class="alrt abl">🏃 Skakanka po treningu · 5–8×100 · interwały</div>
+  <button class="rbtn" onclick="rst('d2')">Resetuj Dzień 2</button>
+</div>
+
+<!-- DZIEŃ 3 -->
+<div id="d3" class="panel">
+  <div class="alrt ag">🔄 Zacznij od Kick Drill (zakładka 🎯) — 7 minut</div>
+  <div class="slbl">Spin the cat</div>
+  <div class="acard" id="cx-d3s"><div class="exrow" onclick="tog('d3s')"><div class="chk" id="ck-d3s"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Spin the cat</div><div class="exd" id="d3sd">Kontrolowany</div></div><div class="exv">3×4/str</div></div></div>
+
+  <div class="slbl">Flaga — <span id="d3wl">T1–2</span></div>
+  <div class="acard" id="cx-d3f1"><div class="exrow" onclick="tog('d3f1')"><div class="chk" id="ck-d3f1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn" id="d3f1n">Entry 45°</div></div><div class="exv" id="d3f1v">3×2/str</div></div></div>
+  <div class="acard" id="cx-d3f2"><div class="exrow" onclick="tog('d3f2')"><div class="chk" id="ck-d3f2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">45° hold proste nogi</div></div><div class="exv" id="d3f2v">6×10–12s</div></div></div>
+  <div class="acard" id="cx-d3f3"><div class="exrow" onclick="tog('d3f3')"><div class="chk" id="ck-d3f3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn" id="d3f3n">40° próby</div><div class="exd">Tylko jeśli bark = 0</div></div><div class="exv" id="d3f3v">3×4–6s</div></div></div>
+  <div class="acard" id="cx-d3f4"><div class="exrow" onclick="tog('d3f4')"><div class="chk" id="ck-d3f4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Hip stack pulses</div></div><div class="exv">3×5</div></div></div>
+
+  <div class="slbl">Core</div>
+  <div class="acard" id="cx-d3c1"><div class="exrow" onclick="tog('d3c1')"><div class="chk" id="ck-d3c1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Dragon flag</div><div class="exd">Ekscentrycznie · 4 sek w dół</div></div><div class="exv" id="d3c1v">3×4</div></div></div>
+  <div class="acard" id="cx-d3c2"><div class="exrow" onclick="tog('d3c2')"><div class="chk" id="ck-d3c2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Wycieraczki na drążku</div></div><div class="exv" id="d3c2v">3×8/str</div></div></div>
+  <div class="acard" id="cx-d3c3"><div class="exrow" onclick="tog('d3c3')"><div class="chk" id="ck-d3c3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Dead bug</div></div><div class="exv" id="d3c3v">3×8/str</div></div></div>
+  <div class="acard" id="cx-d3c4"><div class="exrow" onclick="tog('d3c4')"><div class="chk" id="ck-d3c4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Side body compression hold</div></div><div class="exv" id="d3c4v">3×25s</div></div></div>
+
+  <div class="alrt agr">✅ Mobilność L-sit na końcu</div>
+  <button class="rbtn" onclick="rst('d3')">Resetuj Dzień 3</button>
+</div>
+
+<!-- DZIEŃ 4 -->
+<div id="d4" class="panel">
+  <div class="slbl">Kółka</div>
+  <div class="acard" id="cx-d4k1"><div class="exrow" onclick="tog('d4k1')"><div class="chk" id="ck-d4k1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Ring dips</div><div class="exd" id="d4k1d">+7 kg</div></div><div class="exv" id="d4k1v">3×5</div></div></div>
+  <div class="acard" id="cx-d4k2"><div class="exrow" onclick="tog('d4k2')"><div class="chk" id="ck-d4k2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Ring push-up z piką</div></div><div class="exv" id="d4k2v">3×6</div></div></div>
+  <div class="acard" id="cx-d4k3"><div class="exrow" onclick="tog('d4k3')"><div class="chk" id="ck-d4k3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Turned-out support hold</div></div><div class="exv">3×20s</div></div></div>
+  <div class="acard" id="cx-d4k4"><div class="exrow" onclick="tog('d4k4')"><div class="chk" id="ck-d4k4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Prone Y-T-W</div><div class="exd">Bark — obowiązkowo</div></div><div class="exv">2×10</div></div></div>
+
+  <div class="slbl">Drążek</div>
+  <div class="acard" id="cx-d4d1"><div class="exrow" onclick="tog('d4d1')"><div class="chk" id="ck-d4d1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Pull-up</div><div class="exd" id="d4d1d">+12 kg</div></div><div class="exv" id="d4d1v">3×4</div></div></div>
+  <div class="acard" id="cx-d4d2"><div class="exrow" onclick="tog('d4d2')"><div class="chk" id="ck-d4d2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Chest-to-bar pull-up</div></div><div class="exv">3×4</div></div></div>
+  <div class="acard" id="cx-d4d3"><div class="exrow" onclick="tog('d4d3')"><div class="chk" id="ck-d4d3"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Spin the cat — pełny zakres</div></div><div class="exv">3×3</div></div></div>
+  <div class="acard" id="cx-d4d4"><div class="exrow" onclick="tog('d4d4')"><div class="chk" id="ck-d4d4"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Dead hang</div></div><div class="exv" id="d4d4v">2×35s</div></div></div>
+
+  <div class="slbl">Finisher</div>
+  <div class="acard" id="cx-d4f1"><div class="exrow" onclick="tog('d4f1')"><div class="chk" id="ck-d4f1"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Kettlebell swing</div></div><div class="exv" id="d4f1v">3×12</div></div></div>
+  <div class="acard" id="cx-d4f2"><div class="exrow" onclick="tog('d4f2')"><div class="chk" id="ck-d4f2"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div><div class="exb"><div class="exn">Farmer carry</div></div><div class="exv">3×30m</div></div></div>
+
+  <div class="alrt agr">✅ Mobilność L-sit na końcu</div>
+  <div class="alrt abl">🏃 Skakanka po treningu · 5–10×100 · interwały</div>
+  <button class="rbtn" onclick="rst('d4')">Resetuj Dzień 4</button>
+</div>
+
+<!-- ZASADY -->
+<div id="z" class="panel">
+  <div class="slbl">Zasady bezwzględne</div>
+  <div class="acard">
+    <div class="rrow"><div class="rico">⏱</div><div><div class="rtit">Min. 72h między flagami</div><div class="rsub">D1 i D3 nigdy dwa dni z rzędu</div></div></div>
+    <div class="rrow"><div class="rico">🚫</div><div><div class="rtit">Bark >3/10 → flaga odpada</div><div class="rsub">Tylko drille podłogowe tego dnia</div></div></div>
+    <div class="rrow"><div class="rico">🎯</div><div><div class="rtit">Kick drill ZAWSZE przed flagą</div><div class="rsub">7 minut — bez skrótu</div></div></div>
+    <div class="rrow"><div class="rico">🚣</div><div><div class="rtit">Ergometr 500m — 70% tempa</div><div class="rsub">Rozgrzewka każdego dnia</div></div></div>
+    <div class="rrow"><div class="rico">🏃</div><div><div class="rtit">Skakanka tylko D2 i D4</div><div class="rsub">Po treningu · 5–10×100</div></div></div>
+  </div>
+  <div class="slbl">Rozgrzewka — każdy trening</div>
+  <div class="acard">
+    <div class="rrow"><div class="rico">🚣</div><div style="flex:1"><div class="rtit">Ergometr 500m</div></div><div class="rval">70%</div></div>
+    <div class="rrow"><div class="rico">🎽</div><div style="flex:1"><div class="rtit">Band pull-aparts</div></div><div class="rval">2×15</div></div>
+    <div class="rrow"><div class="rico">🔄</div><div style="flex:1"><div class="rtit">Shoulder CARs</div></div><div class="rval">1×5/str</div></div>
+    <div class="rrow"><div class="rico">💪</div><div style="flex:1"><div class="rtit">Scap push-ups</div></div><div class="rval">2×10</div></div>
+    <div class="rrow"><div class="rico">🏋️</div><div style="flex:1"><div class="rtit">Hip hinge z kijem</div></div><div class="rval">2×8</div></div>
+    <div class="rrow"><div class="rico">🧱</div><div style="flex:1"><div class="rtit">Side plank</div></div><div class="rval">1×20s/str</div></div>
+  </div>
+</div>
+
+<!-- POSTĘP -->
+<div id="s" class="panel">
+  <div class="slbl">Łącznie</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+    <div class="sbox"><div class="sbox-lbl">Ukończone</div><div class="sbox-val" id="sd">0</div></div>
+    <div class="sbox"><div class="sbox-lbl">Pozostało</div><div class="sbox-val" id="sl">0</div></div>
+  </div>
+  <div class="slbl">Postęp dni</div>
+  <div id="dps"></div>
+  <button class="rbtn" style="color:#f87171;margin-top:8px" onclick="rstAll()">🗑 Resetuj wszystko</button>
+</div>
+
+<div class="bnav">
+  <button class="ni on" id="nk" onclick="go('k',null,'nk')"><span class="ne">🎯</span>Kick</button>
+  <button class="ni" id="nd1" onclick="go('d1',null,'nd1')"><span class="ne">🚩</span>D1·D3</button>
+  <button class="ni" id="nd2" onclick="go('d2',null,'nd2')"><span class="ne">💪</span>D2·D4</button>
+  <button class="ni" id="nz" onclick="go('z',null,'nz')"><span class="ne">📋</span>Zasady</button>
+  <button class="ni" id="ns" onclick="go('s',null,'ns')"><span class="ne">📊</span>Postęp</button>
+</div>
+
+<script>
+const NM={k:'nk',d1:'nd1',d2:'nd2',d3:'nd1',d4:'nd2',z:'nz',s:'ns'};
+const DI={
+  k:['k0','k1','k2','k3','km1','km2','km3','km4'],
+  d1:['d1s','d1f1','d1f2','d1f3','d1f4','d1p1','d1p2','d1p3','d1p4'],
+  d2:['d2k1','d2k2','d2k3','d2k4','d2k5','d2n1','d2n2','d2n3','d2n4','d2n5'],
+  d3:['d3s','d3f1','d3f2','d3f3','d3f4','d3c1','d3c2','d3c3','d3c4'],
+  d4:['d4k1','d4k2','d4k3','d4k4','d4d1','d4d2','d4d3','d4d4','d4f1','d4f2']
+};
+const DN={k:'Kick Drill',d1:'Dzień 1',d2:'Dzień 2',d3:'Dzień 3',d4:'Dzień 4'};
+let ST={},CW=1,CD='k';
+
+function ld(){try{ST=JSON.parse(localStorage.getItem('fg2')||'{}')}catch(e){ST={}}try{CW=parseInt(localStorage.getItem('fg2w')||'1')}catch(e){}}
+function sv(){try{localStorage.setItem('fg2',JSON.stringify(ST));localStorage.setItem('fg2w',CW)}catch(e){}}
+
+function tog(id){ST[id]=!ST[id];sv();ui(id);upProg();}
+
+function ui(id){
+  const done=!!ST[id];
+  const isDrill=(id==='k1'||id==='k2'||id==='k3');
+  if(isDrill){
+    const d=document.getElementById('dr-'+id);
+    const n=document.getElementById('dn-'+id);
+    if(d)d.classList.toggle('dn',done);
+    if(n)n.style.background=done?'#4ade80':'#c9a84c';
+  }else{
+    const c=document.getElementById('cx-'+id);
+    const k=document.getElementById('ck-'+id);
+    if(c)c.classList.toggle('dn',done);
+    if(k)k.classList.toggle('on',done);
+  }
+}
+
+function upProg(){
+  const items=DI[CD]||[];
+  const tot=items.length;
+  const dn=items.filter(i=>!!ST[i]).length;
+  const pct=tot?Math.round(dn/tot*100):0;
+  const c=144.5;
+  document.getElementById('rfg').style.strokeDashoffset=c-(c*pct/100);
+  document.getElementById('rpct').textContent=pct+'%';
+  document.getElementById('dc').textContent=dn;
+  document.getElementById('tc').textContent=tot;
+  const sub=document.getElementById('psub');
+  if(dn===0)sub.textContent='Zacznij trening';
+  else if(dn===tot)sub.textContent='Trening ukończony! 💪';
+  else sub.textContent='Zostało '+(tot-dn)+' ćwiczeń';
+  upStats();
+}
+
+function upStats(){
+  let td=0,ta=0;
+  Object.keys(DI).forEach(d=>{ta+=DI[d].length;td+=DI[d].filter(i=>!!ST[i]).length;});
+  document.getElementById('sd').textContent=td;
+  document.getElementById('sl').textContent=ta-td;
+  const dp=document.getElementById('dps');
+  if(!dp)return;
+  dp.innerHTML='';
+  Object.keys(DI).forEach(d=>{
+    const it=DI[d];
+    const dn=it.filter(i=>!!ST[i]).length;
+    const pct=it.length?Math.round(dn/it.length*100):0;
+    dp.innerHTML+=`<div class="dp-row"><div class="dp-top"><span class="dp-nm">${DN[d]}</span><span class="dp-pct">${dn}/${it.length}</span></div><div class="dp-bar"><div class="dp-fill${pct===100?' full':''}" style="width:${pct}%"></div></div></div>`;
+  });
+}
+
+function rst(day){
+  if(!confirm('Resetować '+DN[day]+'?'))return;
+  DI[day].forEach(i=>{ST[i]=false;ui(i);});sv();upProg();
+}
+
+function rstAll(){
+  if(!confirm('Resetować wszystkie dni?'))return;
+  ST={};sv();
+  Object.keys(DI).forEach(d=>DI[d].forEach(i=>ui(i)));upProg();
+}
+
+function setW(w,btn){
+  CW=w;sv();
+  document.querySelectorAll('.wbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');applyW();
+}
+
+function applyW(){
+  const t=CW===1;
+  const x=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  x('d1wl',t?'T1–2':'T3–4');
+  x('d1f1n',t?'Entry 45° slow kick':'45° slow kick');
+  x('d1f1v',t?'4×3/str':'4×3/str');
+  x('d1f2v',t?'5×8–10s':'5×12–15s');
+  x('d1f3n',t?'Hip stack pulses':'40° hold');
+  x('d1f3v',t?'3×5/str':'4×6–8s');
+  x('d1f4n',t?'Active hang':'Hip stack pulses');
+  x('d1f4v',t?'2×30s':'3×5');
+  x('d1p1d',t?'+10 kg':'+12 kg');
+  x('d1p1v',t?'4×4':'4×5');
+  x('d1p2v',t?'3×4/str':'3×5/str');
+  x('d1p3v',t?'3×6/str':'3×8/str');
+  x('d1sd',t?'Kontrolowany':'Z zatrzymaniem poziomym');
+  x('d3wl',t?'T1–2':'T3–4');
+  x('d3sd',t?'Kontrolowany':'Z zatrzymaniem poziomym');
+  x('d3f1n',t?'Entry 45°':'45° hold');
+  x('d3f1v',t?'3×2/str':'4×15s');
+  x('d3f2v',t?'6×10–12s':'4×8–10s');
+  x('d3f3n',t?'40° próby':'35° próby');
+  x('d3f3v',t?'3×4–6s':'2×3–5s');
+  x('d3c1v',t?'3×4':'3×5');
+  x('d3c2v',t?'3×8/str':'3×10/str');
+  x('d3c3v',t?'3×8/str':'3×10/str');
+  x('d3c4v',t?'3×25s':'3×30s');
+  x('d2k1d',t?'+5 kg':'+7 kg');
+  x('d2k1v',t?'4×5':'4×5');
+  x('d2k2v',t?'4×6':'4×8');
+  x('d2n1d',t?'4×5':'4×6');
+  x('d2n1v',t?'4×5':'4×6');
+  x('d2n2d',t?'16 kg':'20 kg');
+  x('d2n2v',t?'3×5/str':'3×6/str');
+  x('d2n4d',t?'80 cm':'85 cm');
+  x('d2n4v',t?'4×3':'5×3');
+  x('d2n5v',t?'3×25s/str':'3×30s/str');
+  x('d4k1d',t?'+7 kg':'+10 kg');
+  x('d4k1v',t?'3×5':'3×5');
+  x('d4k2v',t?'3×6':'3×8');
+  x('d4d1d',t?'+12 kg':'+15 kg');
+  x('d4d1v',t?'3×4':'4×5');
+  x('d4d4v',t?'2×35s':'2×40s');
+  x('d4f1v',t?'3×12':'3×15');
+}
+
+function go(id,tabEl,navId){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
+  if(tabEl)tabEl.classList.add('on');
+  else{const m={k:0,d1:1,d2:2,d3:3,d4:4,z:5,s:6};const ts=document.querySelectorAll('.atab');if(m[id]!==undefined&&ts[m[id]])ts[m[id]].classList.add('on');}
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  const nid=navId||NM[id];if(nid)document.getElementById(nid).classList.add('on');
+  CD=id;upProg();
+  window.scrollTo(0,0);
+}
+
+ld();
+Object.keys(DI).forEach(d=>DI[d].forEach(i=>ui(i)));
+applyW();upProg();
+if(CW===2){document.querySelectorAll('.wbtn')[0].classList.remove('on');document.querySelectorAll('.wbtn')[1].classList.add('on');}
+</script>
+</body>
+</html>
