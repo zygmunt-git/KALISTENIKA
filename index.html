@@ -423,4 +423,14 @@ document.getElementById("tabbar").addEventListener("click",e=>{
 document.getElementById("content").addEventListener("click",e=>{
  const row=e.target.closest("[data-k]");
  if(row){ const k=row.dataset.k; setck(k,!ck(k)); renderContent(); return;}
- const rb=e.target.closest("
+ const rb=e.target.closest("[data-reset]");
+ if(rb){ collectKeys().forEach(k=>setck(k,false)); renderContent(); }
+});
+document.getElementById("content").addEventListener("input",e=>{
+ const n=e.target.dataset.note; if(n) localStorage.setItem("flag6n_"+n,e.target.value);
+});
+
+renderWeekbar(); renderTabbar(); renderContent();
+</script>
+</body>
+</html>
